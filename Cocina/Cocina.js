@@ -1,78 +1,48 @@
-const cliente = require("./caja");
+const cliente = require("./cliente");
 
 function verCatalogo() {
     return cliente.consultarProductos();
 }
-function buscarProductosBaratos() {
-    const productos = cliente.catalogo.filter(producto => producto.precio <= 30);
 
-    console.log("\n--- Productos baratos ---");
-
-    if (productos.length === 0) {
-        console.log("No hay productos baratos");
-    } else {
-        for (const producto of productos) {
-            console.log(`${producto.id}. ${producto.nombre} - $${producto.precio.toFixed(2)}`);
-        }
-    }
-
-    return productos;
+function agregarProducto(nombre, precio) {
+    return cliente.agregarProducto(nombre, precio);
 }
 
-function buscarProductosCaros() {
-    const productos = cliente.catalogo.filter(producto => producto.precio > 30);
-
-    console.log("\n--- Productos caros ---");
-
-    if (productos.length === 0) {
-        console.log("No hay productos caros");
-    } else {
-        for (const producto of productos) {
-            console.log(`${producto.id}. ${producto.nombre} - $${producto.precio.toFixed(2)}`);
-        }
-    }
-
-    return productos;
-}
-
-function buscarBebida() {
-    const producto = cliente.catalogo.find(producto => producto.categoria === "bebida");
-
-    console.log("\n--- Bebida ---");
-
-    if (!producto) {
-        console.log("No se encontro ninguna bebida");
-    } else {
-        console.log(`${producto.id}. ${producto.nombre} - $${producto.precio.toFixed(2)}`);
-    }
-
-    return producto;
-}
-
-function buscarPostre() {
-    const producto = cliente.catalogo.find(producto => producto.categoria === "postre");
-
-    console.log("\n--- Postre ---");
-
-    if (!producto) {
-        console.log("No se encontro ningun postre");
-    } else {
-        console.log(`${producto.id}. ${producto.nombre} - $${producto.precio.toFixed(2)}`);
-    }
-
-    return producto;
-}
-
-function agregarProducto(nombre, precio, categoria) {
-    return cliente.agregarProducto(nombre, precio, categoria);
-}
-
-function editarProducto(idProducto, nombre, precio, categoria) {
-    return cliente.editarProducto(idProducto, nombre, precio, categoria);
+function editarProducto(idProducto, nombre, precio) {
+    return cliente.editarProducto(idProducto, nombre, precio);
 }
 
 function eliminarProducto(idProducto) {
     return cliente.eliminarProducto(idProducto);
+}
+
+function buscarBaratos(limite) {
+    return cliente.catalogo.filter(producto => producto.precio <= limite);
+}
+
+function buscarCaros(limite) {
+    return cliente.catalogo.filter(producto => producto.precio >= limite);
+}
+
+function buscarPorEtiqueta(etiqueta) {
+    return cliente.catalogo.filter(producto => producto.categoria === etiqueta);
+}
+
+function buscarBebidas() {
+    return buscarPorEtiqueta("bebida");
+}
+
+function buscarPostres() {
+    return buscarPorEtiqueta("postre");
+}
+
+function buscarProductoPorNombre(nombre) {
+    return cliente.catalogo.find(producto => producto.nombre.toLowerCase() === nombre.toLowerCase());
+}
+
+function ordenarPorPrecio(ascendente = true) {
+    const copia = [...cliente.catalogo];
+    return copia.sort((a, b) => ascendente ? a.precio - b.precio : b.precio - a.precio);
 }
 
 function verPedidosPendientes() {
@@ -86,7 +56,7 @@ function verPedidosPendientes() {
 
     for (const pedido of pendientes) {
         const nombres = pedido.productos.map(producto => producto.nombre).join(", ");
-        console.log(`#${pedido.id} | ${pedido.cliente} | ${nombres}`);
+        console.log(`#${pedido.id} | ${pedido.folio} | ${pedido.cliente} | ${nombres}`);
     }
     return pendientes;
 }
@@ -109,15 +79,88 @@ function marcarPedidoListo(idPedido) {
     return pedido;
 }
 
-module.exports = {
-    verCatalogo,
-    agregarProducto,
-    editarProducto,
-    eliminarProducto,
-    verPedidosPendientes,
+let agua = 1000;
+let azucar = 100;
+let cafe = 300;
+
+function prepararCafe() {
+    return new Promise((resolve, reject) => {
+
+        console.log("\nPreparando café...");
+
+        if (agua < 200) {
+            reject("Falta agua para preparar el café");
+            return;
+        }
+
+        if (cafe < 20) {
+            reject("Falta café para preparar el café");
+            return;
+        }
+
+        if (azucar < 10) {
+            reject("Falta azúcar para preparar el café");
+            return;
+        }
+
+        agua -= 200;
+        cafe -= 20;
+        azucar -= 10;
+
+        setTimeout(() => {
+            console.log("Agregando agua...");
+
+            setTimeout(() => {
+                console.log("Agregando azúcar...");
+
+                setTimeout(() => {
+                    console.log("Agregando café...");
+
+                    setTimeout(() => {
+
+                        const error = Math.random();
+
+                        if (error < 0.10) {
+                            reject("Error en la cafetera");
+
+                        } else if (error < 0.20) {
+                            reject("El café se quemó");
+
+                        } else if (error < 0.25) {
+                            reject("Error general en cocina");
+
+                        } else {
+                            console.log("Café preparado correctamente");
+                            console.log(`Agua restante: ${agua} ml`);
+                            console.log(`Azúcar restante: ${azucar} g`);
+                            console.log(`Café restante: ${cafe} g`);
+
+                            resolve("cafe listo");
+                        }
+
+                    }, 1000);
+
+                }, 1000);
+
+            }, 1000);
+
+        }, 1000);
+    });
+}
+
+module.exports = { 
+    verCatalogo, 
+    agregarProducto, 
+    editarProducto, 
+    eliminarProducto, 
+    buscarBaratos, 
+    buscarCaros, 
+    buscarPorEtiqueta, 
+    buscarBebidas, 
+    buscarPostres, 
+    buscarProductoPorNombre, 
+    ordenarPorPrecio, 
+    verPedidosPendientes, 
     marcarPedidoListo,
-    buscarProductosBaratos,
-    buscarProductosCaros,
-    buscarBebida,
-    buscarPostre
+    prepararCafe
 };

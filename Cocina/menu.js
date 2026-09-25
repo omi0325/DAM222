@@ -1,7 +1,7 @@
 const readline = require("readline/promises");
 const caja = require("./caja");
 const cliente = require("./cliente");
-const cocina = require("../Cocina");
+const cocina = require("./Cocina");
 
 function limpiar() {
     console.clear();
@@ -46,7 +46,17 @@ async function flujoCrearPedido(rl, contexto) {
         return;
     }
 
-    cliente.crearPedido(nombre, ids);
+    const pedido = cliente.crearPedido(nombre, ids);
+
+if (pedido && pedido.productos.some(producto => producto.id === 1)) {
+    cocina.prepararCafe()
+        .then(() => {
+            console.log(" El café ya está listo");
+        })
+        .catch(error => {
+            console.log(`Problema en cocina: ${error}`);
+        });
+}
 }
 
 async function menuCaja(rl) {
@@ -81,8 +91,9 @@ async function menuCliente(rl) {
         console.log("\n=== Menu Cliente ===");
         console.log("1. Consultar productos");
         console.log("2. Crear pedido");
-        console.log("3. Lista de pedidos");
-        console.log("4. Consultar estado de mi pedido");
+        console.log("3. Consultar estado de mi pedido");
+        console.log("4. Ver menu del dia (stock y promociones)");
+        console.log("5. Buscar y filtrar productos");
         console.log("0. Volver");
         opcion = (await rl.question("Elige una opcion: ")).trim();
 
@@ -92,10 +103,12 @@ async function menuCliente(rl) {
         } else if (opcion === "2") {
             await flujoCrearPedido(rl, "Cliente");
             await pausar(rl);
-        } else if (opcion === "3") {
-            cliente.listarPedidos();
-            await pausar(rl);
         } else if (opcion === "4") {
+            cliente.mostrarMenuDinamico();
+            await pausar(rl);
+        } else if (opcion === "5") {
+            await menuBusquedaCocina(rl);
+        } else if (opcion === "3") {
             const folio = (await rl.question("Folio de tu pedido: ")).trim();
             if (!folio) {
                 console.log("Debes indicar un folio");
@@ -122,10 +135,7 @@ async function menuCocina(rl) {
         console.log("4. Eliminar producto");
         console.log("5. Ver pedidos pendientes");
         console.log("6. Marcar pedido como listo");
-        console.log("7. Buscar productos baratos");
-        console.log("8. Buscar productos caros");
-        console.log("9. Buscar bebidas");
-        console.log("10. Buscar postres");
+        console.log("7. Buscar y ordenar productos");
         console.log("0. Volver");
         opcion = (await rl.question("Elige una opcion: ")).trim();
 
@@ -199,23 +209,66 @@ async function menuCocina(rl) {
                 }
             }
             await pausar(rl);
+        } else if (opcion === "7") {
+            await menuBusquedaCocina(rl);
+        } else if (opcion !== "0") {
+            console.log(`Opcion "${opcion}" no valida`);
+            await pausar(rl);
         }
-         else if (opcion === "7") {
-    cocina.buscarProductosBaratos();
-    await pausar(rl);
+    }
+}
 
-} else if (opcion === "8") {
-        cocina.buscarProductosCaros();
-        await pausar(rl);
+function imprimirProductos(productos) {
+    if (productos.length === 0) {
+        console.log("No se encontraron productos");
+        return;
+    }
+    productos.forEach(producto => {
+        console.log(`${producto.id}. ${producto.nombre} [${producto.categoria}] - $${producto.precio.toFixed(2)}`);
+    });
+}
 
-        } else if (opcion === "9") {
-        cocina.buscarBebida();
-        await pausar(rl);
+async function menuBusquedaCocina(rl) {
+    let opcion = "";
 
-        } else if (opcion === "10") {
-        cocina.buscarPostre();
-        await pausar(rl);
-        }else if (opcion !== "0") {
+    while (opcion !== "0") {
+        limpiar();
+        console.log("\n=== Buscar y ordenar productos ===");
+        console.log("1. Productos baratos (precio menor o igual a...)");
+        console.log("2. Productos caros (precio mayor o igual a...)");
+        console.log("3. Bebidas");
+        console.log("4. Postres");
+        console.log("5. Buscar por etiqueta");
+        console.log("6. Ordenar de menor a mayor precio");
+        console.log("7. Ordenar de mayor a menor precio");
+        console.log("0. Volver");
+        opcion = (await rl.question("Elige una opcion: ")).trim();
+
+        if (opcion === "1") {
+            const limite = Number(await rl.question("Precio maximo: "));
+            imprimirProductos(cocina.buscarBaratos(limite));
+            await pausar(rl);
+        } else if (opcion === "2") {
+            const limite = Number(await rl.question("Precio minimo: "));
+            imprimirProductos(cocina.buscarCaros(limite));
+            await pausar(rl);
+        } else if (opcion === "3") {
+            imprimirProductos(cocina.buscarBebidas());
+            await pausar(rl);
+        } else if (opcion === "4") {
+            imprimirProductos(cocina.buscarPostres());
+            await pausar(rl);
+        } else if (opcion === "5") {
+            const etiqueta = (await rl.question("Etiqueta (bebida/postre/comida): ")).trim();
+            imprimirProductos(cocina.buscarPorEtiqueta(etiqueta));
+            await pausar(rl);
+        } else if (opcion === "6") {
+            imprimirProductos(cocina.ordenarPorPrecio(true));
+            await pausar(rl);
+        } else if (opcion === "7") {
+            imprimirProductos(cocina.ordenarPorPrecio(false));
+            await pausar(rl);
+        } else if (opcion !== "0") {
             console.log(`Opcion "${opcion}" no valida`);
             await pausar(rl);
         }

@@ -1,10 +1,10 @@
 
 const catalogo = [
-    { id: 1, nombre: "Cafe americano", precio: 30, categoria: "bebida" },
-    { id: 2, nombre: "Capuchino", precio: 45, categoria: "bebida" },
-    { id: 3, nombre: "Te chai", precio: 40, categoria: "bebida" },
-    { id: 4, nombre: "Pan dulce", precio: 20.5, categoria: "postre" },
-    { id: 5, nombre: "Sandwich", precio: 55, categoria: "postre" }
+    { id: 1, nombre: "Cafe americano", precio: 30, categoria: "bebida", stock: 20, promocion: false },
+    { id: 2, nombre: "Capuchino", precio: 45, categoria: "bebida", stock: 15, promocion: true },
+    { id: 3, nombre: "Te chai", precio: 40, categoria: "bebida", stock: 10, promocion: false },
+    { id: 4, nombre: "Pan dulce", precio: 20.5, categoria: "postre", stock: 8, promocion: false },
+    { id: 5, nombre: "Sandwich", precio: 55, categoria: "comida", stock: 5, promocion: false }
 ];
 
 const pedidosCliente = [];
@@ -12,12 +12,12 @@ const pedidosCliente = [];
 function consultarProductos() {
     console.log("\n--- Productos disponibles ---");
     for (const producto of catalogo) {
-        console.log(`${producto.id}. ${producto.nombre} - $${producto.precio.toFixed(2)} - ${producto.categoria}`);
+        console.log(`${producto.id}. ${producto.nombre} - $${producto.precio.toFixed(2)}`);
     }
     return catalogo;
 }
 
-function agregarProducto(nombre, precio, categoria) {
+function agregarProducto(nombre, precio, categoria = "otro", stock = 10, promocion = false) {
     if (!nombre || isNaN(precio) || precio <= 0) {
         console.log("Producto invalido: se requiere nombre y un precio mayor a 0");
         return null;
@@ -27,7 +27,9 @@ function agregarProducto(nombre, precio, categoria) {
         id: catalogo.length + 1,
         nombre: nombre,
         precio: precio,
-        categoria: categoria
+        categoria: categoria,
+        stock: stock,
+        promocion: promocion
     };
 
     catalogo.push(producto);
@@ -35,23 +37,29 @@ function agregarProducto(nombre, precio, categoria) {
     return producto;
 }
 
+function mostrarMenuDinamico() {
+    console.log("\n--- Menu del dia ---");
+
+    const disponibles = catalogo.filter(producto => producto.stock > 0);
+
+    if (disponibles.length === 0) {
+        console.log("No hay productos disponibles por el momento");
+        return disponibles;
+    }
+
+    const lineas = disponibles.map(producto => {
+        const etiquetaPromo = producto.promocion ? " (EN PROMOCION)" : "";
+        const etiquetaStock = producto.stock <= 5 ? " - ultimas piezas" : "";
+        return `${producto.id}. ${producto.nombre} [${producto.categoria}] - $${producto.precio.toFixed(2)}${etiquetaPromo}${etiquetaStock}`;
+    });
+
+    lineas.forEach(linea => console.log(linea));
+
+    return disponibles;
+}
+
 function buscarProducto(idProducto) {
     return catalogo.find(producto => producto.id === idProducto);
-}
-function productosBaratos() {
-    return catalogo.filter(producto => producto.precio <= 30);
-}
-
-function productosCaros() {
-    return catalogo.filter(producto => producto.precio > 30);
-}
-
-function buscarBebida() {
-    return catalogo.find(producto => producto.categoria === "bebida");
-}
-
-function buscarPostre() {
-    return catalogo.find(producto => producto.categoria === "postre");
 }
 
 function editarProducto(idProducto, nombre, precio) {
@@ -108,7 +116,6 @@ function crearPedido(cliente, idsProductos) {
             console.log(`Producto con id ${idProducto} no existe, se omite`);
             continue;
         }
-
         productos.push(producto);
         total += producto.precio;
     }
@@ -161,7 +168,7 @@ function listarPedidos() {
 
     for (const pedido of pedidosCliente) {
         const nombres = pedido.productos.map(producto => producto.nombre).join(", ");
-        console.log(`#${pedido.id} | ${pedido.cliente} | ${nombres} | $${pedido.total.toFixed(2)} | ${pedido.estado}`);
+        console.log(`#${pedido.id} | ${pedido.folio} | ${pedido.cliente} | ${nombres} | $${pedido.total.toFixed(2)} | ${pedido.estado}`);
     }
     return pedidosCliente;
 }
@@ -170,14 +177,11 @@ module.exports = {
     catalogo,
     pedidosCliente,
     consultarProductos,
+    mostrarMenuDinamico,
     agregarProducto,
     editarProducto,
     eliminarProducto,
     buscarProducto,
-    productosBaratos,
-    productosCaros,
-    buscarBebida,
-    buscarPostre,
     crearPedido,
     listarPedidos,
     consultarPedidoPorFolio
