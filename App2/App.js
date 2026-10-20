@@ -16,10 +16,11 @@ export default function App() {
 /* Zona de estilos y posicionamiento */
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+     flex: 1,
     backgroundColor: '#3c7586',
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
     alignItems: 'center',
-    justifyContent: 'center',
   },
   fondo:{
     backgroundColor:'gold',
