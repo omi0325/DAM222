@@ -6,9 +6,9 @@ import {Perfil} from './componentes/Perfil';
 export default function App() {
   return (
     <View style={styles.container}>
-         <Perfil nombre="Edgar" materia="Movil"></Perfil>
-         <Perfil nombre="emilio" cuatri="5"></Perfil>
-         <Perfil nombre="jenny" carrera="TIID"></Perfil>
+         <Perfil style={styles.fondo} nombre="Edgar" materia="Movil" carrera="TIID" cuatri="5" ></Perfil>
+         <Perfil style={styles.fondo2} nombre="emilio" materia="Movil" carrera="TIID" cuatri="5"></Perfil>
+         <Perfil style={styles.fondo3} nombre="jenny" materia="Movil" cuatri="5" carrera="TIID"></Perfil>
       <StatusBar style="auto" />
     </View>
   );
@@ -17,8 +17,17 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#9b1c90',
+    backgroundColor: '#3c7586',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  fondo:{
+    backgroundColor:'gold',
+  },
+  fondo2:{
+    backgroundColor:'green',
+  },
+  fondo3:{
+    backgroundColor:'black',
   },
 });
