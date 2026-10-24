@@ -1,14 +1,12 @@
 /*Zona de importaciones */
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View} from 'react-native';
-import {Perfil} from './componentes/Perfil';
+import { StyleSheet, View} from 'react-native';
+import MenuScreen from './screens/MenuScreen';
 /* Zona main */
 export default function App() {
   return (
     <View style={styles.container}>
-         <Perfil style={styles.fondo} nombre="Edgar" materia="Movil" carrera="TIID" cuatri="5" ></Perfil>
-         <Perfil style={styles.fondo2} nombre="emilio" materia="Movil" carrera="TIID" cuatri="5"></Perfil>
-         <Perfil style={styles.fondo3} nombre="jenny" materia="Movil" cuatri="5" carrera="TIID"></Perfil>
+        <MenuScreen></MenuScreen>
       <StatusBar style="auto" />
     </View>
   );
@@ -18,17 +16,7 @@ const styles = StyleSheet.create({
   container: {
      flex: 1,
     backgroundColor: '#3c7586',
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
+    justifyContent: 'center',
     alignItems: 'center',
-  },
-  fondo:{
-    backgroundColor:'gold',
-  },
-  fondo2:{
-    backgroundColor:'green',
-  },
-  fondo3:{
-    backgroundColor:'black',
   },
 });
