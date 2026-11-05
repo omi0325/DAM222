@@ -21,9 +21,9 @@ export default function ImageScreen() {
   }
   return(
     <ImageBackground
-    source={{''}} style={styles.container} resizeMode="cover">
+    source={{uri:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSBEtVykDOqgeqjpGvUy9KUnemHuDT6Md02t4Kq__pIrQ&s=10'}} style={styles.container} resizeMode="cover">
     <View>
-      <Text style>Bienvenidos</Text>
+      <Text style={styles.titulo}>Bienvenidos</Text>
     </View>
     <StatusBar style="light" />
     </ImageBackground>
@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#000000', // Verde UPQ
+    backgroundColor: '#000000',
     width: '100%',
   },
   splashIcon: {
