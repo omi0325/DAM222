@@ -7,6 +7,8 @@ import SwitchEjem from '../componentes/SwitchEjem';
 export default function PressableScreen() {
   const[imagenGRANDE,setImagenGrande]=useState(false)
   const[oscuro,SetOscuro]=useState(false)
+
+  
   return (
     <View style={[styles.container,{backgroundColor:oscuro? '#0000':'#ffffff'}]}>
       <Pressable>
