@@ -7,7 +7,7 @@ export default function ActivityScreen({ setScreen }) {
     const [pantalla, setPantalla] = useState('principal');
 
     function cambiarPantalla(destino) {
-        setCargando(true);
+        setCargando(true);47
 
         setTimeout(() => {
             setPantalla(destino);
