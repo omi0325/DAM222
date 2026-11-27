@@ -1,0 +1,11 @@
+import {Stack} from "expo-router";
+import 'expo-sqlite/localStorage/install';
+export default function RootLayout(){
+    return(
+        <Stack>
+            <Stack.Screen name="(Tabs)" options={{headerShown: false}}/>
+            <Stack.Screen name="detalle" options={{title: 'Detalles del Usuario'}} />
+            <Stack.Screen name="actualiza" options={{title: 'Actualizar Usuario'}} />
+        </Stack>
+    );
+} 
