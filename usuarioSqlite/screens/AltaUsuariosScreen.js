@@ -1,26 +1,31 @@
 import React, { useState } from 'react';
 import {View,SafeAreaView,Text,TextInput,Pressable,StyleSheet,} from 'react-native';
-
+import { agregarUsuario } from '../repositories/usuariosRepository';
+import { validarUsuario } from '../services/usuariosService';
 export default function App() {
   const [nombre, setNombre] = useState('');
   const [edad, setEdad] = useState('');
-
+  const guardarUsuario = async () => {
+  if (validarUsuario(nombre, edad) === false) {
+    return;
+  }
+  await agregarUsuario(nombre, Number(edad));
+  setNombre('');
+  setEdad('');
+  alert('Usuario guardado correctamente');
+};
   return (
     <SafeAreaView style={styles.container}>
-
       <View style={styles.card}>
-
         <Text style={styles.titulo}>
           Registro de Usuarios
         </Text>
-
         <TextInput
           style={styles.input}
           placeholder="Nombre del usuario"
           value={nombre}
           onChangeText={setNombre}
         />
-
         <TextInput
           style={styles.input}
           placeholder="Edad del usuario"
@@ -28,21 +33,16 @@ export default function App() {
           value={edad}
           onChangeText={setEdad}
         />
-
-        <Pressable style={styles.boton}>
+        <Pressable style={styles.boton} onPress={guardarUsuario}>
           <Text style={styles.textoBoton}>
             Agregar Usuario
           </Text>
         </Pressable>
-
       </View>
-
     </SafeAreaView>
   );
 }
-
 const styles = StyleSheet.create({
-
   container: {
     flex: 1,
     backgroundColor: '#F5F7FA',
@@ -50,7 +50,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 20,
   },
-
   card: {
     width: '100%',
     backgroundColor: '#FFFFFF',
@@ -65,7 +64,6 @@ const styles = StyleSheet.create({
       height: 3,
     },
   },
-
   titulo: {
     fontSize: 26,
     fontWeight: 'bold',
@@ -73,7 +71,6 @@ const styles = StyleSheet.create({
     marginBottom: 25,
     color: '#1F2937',
   },
-
   input: {
     height: 50,
     borderWidth: 1,
@@ -84,7 +81,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#F9FAFB',
     fontSize: 16,
   },
-
   boton: {
     backgroundColor: '#29bb0c',
     paddingVertical: 15,
@@ -92,11 +88,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 10,
   },
-
   textoBoton: {
     color: '#FFFFFF',
     fontSize: 17,
     fontWeight: 'bold',
   },
-
 });

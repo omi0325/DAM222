@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { SafeAreaView,View,Text,StyleSheet,Pressable,Modal,} from 'react-native';
 import {router,useLocalSearchParams} from 'expo-router';
-
+import { eliminarUsuario } from '../repositories/usuariosRepository';
 export default function DetalleUsuarioScreen() {
   const {id,nombre,edad} = useLocalSearchParams();
   const actualizarUsuario = () => {
@@ -9,13 +9,13 @@ export default function DetalleUsuarioScreen() {
   };
    // Estado para mostrar u ocultar el modal
   const [modalVisible, setModalVisible] = useState(false);
-
-
   // Confirmar la eliminación
-  const confirmarEliminacion = () => {
-    console.log('Eliminar usuario:', id);
-    setModalVisible(false);
-  };
+  const confirmarEliminacion = async () => {
+  await eliminarUsuario(Number(id));
+  setModalVisible(false);
+  alert('Usuario eliminado correctamente');
+  router.back();
+};
   return (
     <SafeAreaView style={styles.container}>
 

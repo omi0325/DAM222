@@ -1,11 +1,25 @@
 import React, { useState } from 'react';
 import { SafeAreaView,View,Text, TextInput, Pressable, StyleSheet,} from 'react-native';
-import {useLocalSearchParams} from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
+import { actualizarUsuario } from '../repositories/usuariosRepository';
+import { validarUsuario } from '../services/usuariosService';
 export default function ActualizarUsuarioScreen() {
   const params = useLocalSearchParams();
-  const [nombre, setNombre] = useState(params.nombre);
-  const [edad, setEdad] = useState(params.edad);
-  const actualizarUsuario = () => {};
+  const [nombre, setNombre] = useState(params.nombre || '');
+  const [edad, setEdad] = useState(params.edad || '');
+ const guardarCambios = async () => {
+  if (validarUsuario(nombre, edad) === false) {
+    return;
+  }
+  try {
+    await actualizarUsuario(Number(params.id), nombre, Number(edad));
+    alert('Usuario actualizado correctamente');
+    router.dismissTo('/consulta');
+  } catch (error) {
+    console.log(error);
+    alert('Error al actualizar el usuario');
+  }
+};
   return (
     <SafeAreaView style={styles.container}>
 
@@ -40,7 +54,7 @@ export default function ActualizarUsuarioScreen() {
 
         <Pressable
           style={styles.boton}
-          onPress={actualizarUsuario}
+          onPress={guardarCambios}
         >
           <Text style={styles.textoBoton}>
             Guardar cambios
